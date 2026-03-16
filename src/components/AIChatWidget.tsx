@@ -89,9 +89,9 @@ const AIChatWidget = () => {
                         : "bg-secondary text-foreground"
                     }`}
                   >
-                    <ReactMarkdown className="prose prose-sm prose-invert max-w-none [&>p]:m-0 [&>ul]:my-1 [&>ol]:my-1">
-                      {msg.content}
-                    </ReactMarkdown>
+                    <div className="prose prose-sm prose-invert max-w-none [&>p]:m-0 [&>ul]:my-1 [&>ol]:my-1">
+                      <ReactMarkdown>{msg.content}</ReactMarkdown>
+                    </div>
                   </div>
                   {msg.role === "user" && (
                     <div className="w-7 h-7 rounded-full bg-secondary flex items-center justify-center shrink-0 mt-1">
