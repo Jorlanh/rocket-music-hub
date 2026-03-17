@@ -22,4 +22,4 @@ Siga os passos abaixo para configurar o ambiente de desenvolvimento:
 
 1. **Clone o repositório:**
    ```sh
-   git clone <URL_DO_SEU_REPOSITORIO>
+   git clone <https://github.com/Jorlanh/rocket-music-hub>

@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/hooks/useAuth";
+import { AuthGuard } from "@/components/AuthGuard";
 import AuthModal from "@/components/AuthModal";
 import Layout from "@/components/Layout";
 import AIChatWidget from "@/components/AIChatWidget";
@@ -30,14 +31,19 @@ const App = () => (
           <AuthModal />
           <Layout>
             <Routes>
+              {/* ROTA RAIZ PÚBLICA: Resolve o conflito de redirecionamento */}
               <Route path="/" element={<Dashboard />} />
+              
               <Route path="/album/:id" element={<AlbumPage />} />
-              <Route path="/profile" element={<ProfilePage />} />
+              
+              {/* ROTAS PRIVADAS: Somente estas exigem login real */}
+              <Route path="/profile" element={<AuthGuard><ProfilePage /></AuthGuard>} />
+              <Route path="/messages" element={<AuthGuard><MessagesPage /></AuthGuard>} />
+              
               <Route path="/ranking" element={<RankingPage />} />
               <Route path="/albums" element={<AlbumsPage />} />
               <Route path="/lists" element={<ListsPage />} />
               <Route path="/communities" element={<CommunitiesPage />} />
-              <Route path="/messages" element={<MessagesPage />} />
               <Route path="/activity" element={<ActivityPage />} />
               <Route path="/terms" element={<TermsPage />} />
               <Route path="/privacy" element={<PrivacyPage />} />

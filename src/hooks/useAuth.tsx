@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, ReactNode, useCallback } from "react";
+import { createContext, useContext, useState, ReactNode, useCallback, useEffect } from "react";
 
 interface User {
   id: string;
@@ -16,61 +16,48 @@ interface User {
 
 interface AuthContextType {
   user: User | null;
+  isLoading: boolean;
   isAuthenticated: boolean;
   showAuthModal: boolean;
   openAuthModal: () => void;
   closeAuthModal: () => void;
   requireAuth: (callback: () => void) => void;
   login: (email: string, password: string) => void;
-  register: (name: string, email: string, password: string) => void;
   logout: () => void;
   updateProfile: (data: Partial<User>) => void;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
-const mockLoggedUser: User = {
-  id: "current-user",
-  name: "Rafael Martins",
-  username: "@rafaelm",
-  avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=128&h=128&fit=crop",
-  bio: "Amante de música desde sempre 🎵 | Rock, Hip Hop & Eletrônica",
-  status: "Ouvindo Paranoid no repeat 🎸",
-  socialLinks: [
-    { platform: "instagram", url: "https://instagram.com/rafaelm" },
-    { platform: "twitter", url: "https://x.com/rafaelm" },
-  ],
-  followers: 1243,
-  following: 567,
-  reviews: 89,
-  lists: 12,
-};
-
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [showAuthModal, setShowAuthModal] = useState(false);
+
+  // Efeito de inicialização: Checa sessão e remove o loader
+  useEffect(() => {
+    const initialize = async () => {
+      try {
+        // Simulação de check de cookie/sessão
+        await new Promise(resolve => setTimeout(resolve, 600));
+        setUser(null); // Começa como visitante
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    initialize();
+  }, []);
 
   const openAuthModal = useCallback(() => setShowAuthModal(true), []);
   const closeAuthModal = useCallback(() => setShowAuthModal(false), []);
 
-  const requireAuth = useCallback(
-    (callback: () => void) => {
-      if (user) {
-        callback();
-      } else {
-        setShowAuthModal(true);
-      }
-    },
-    [user]
-  );
+  const requireAuth = useCallback((callback: () => void) => {
+    if (user) callback();
+    else setShowAuthModal(true);
+  }, [user]);
 
   const login = useCallback((_email: string, _password: string) => {
-    setUser(mockLoggedUser);
-    setShowAuthModal(false);
-  }, []);
-
-  const register = useCallback((_name: string, _email: string, _password: string) => {
-    setUser(mockLoggedUser);
+    // Integração futura com backend
     setShowAuthModal(false);
   }, []);
 
@@ -82,7 +69,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, isAuthenticated: !!user, showAuthModal, openAuthModal, closeAuthModal, requireAuth, login, register, logout, updateProfile }}
+      value={{ user, isLoading, isAuthenticated: !!user, showAuthModal, openAuthModal, closeAuthModal, requireAuth, login, logout, updateProfile }}
     >
       {children}
     </AuthContext.Provider>
